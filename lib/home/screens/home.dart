@@ -16,7 +16,16 @@ class HomeScreen extends StatelessWidget {
         return Scaffold(
           backgroundColor: Colors.grey[100],
           appBar: AppBar(
-            title: const Text('Advanced Paint Canvas'),
+            title: Row(
+              children: [
+                Icon(Icons.pallet),
+                SizedBox(width: 10),
+                Text(
+                  'Canvaz',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
             backgroundColor: Colors.white,
             foregroundColor: Colors.black87,
             elevation: 2,
@@ -518,7 +527,9 @@ class HomeScreen extends StatelessWidget {
                 if (controller.currentTool.value == 'ImportedImageContent') {
                   scaffoldMessenger.showSnackBar(
                     const SnackBar(
-                      content: Text('Image imported! Tap on canvas to place it.'),
+                      content: Text(
+                        'Image imported! Tap on canvas to place it.',
+                      ),
                       duration: Duration(seconds: 2),
                     ),
                   );
@@ -535,7 +546,9 @@ class HomeScreen extends StatelessWidget {
                 if (controller.currentTool.value == 'ImportedImageContent') {
                   scaffoldMessenger.showSnackBar(
                     const SnackBar(
-                      content: Text('Image imported! Tap on canvas to place it.'),
+                      content: Text(
+                        'Image imported! Tap on canvas to place it.',
+                      ),
                       duration: Duration(seconds: 2),
                     ),
                   );
