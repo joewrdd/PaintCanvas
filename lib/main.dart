@@ -1,5 +1,5 @@
+import 'package:canvaz/home/screens/home.dart';
 import 'package:flutter/material.dart';
-import 'package:paint_canvas/home/screens/home.dart';
 
 void main() {
   runApp(const MyApp());
