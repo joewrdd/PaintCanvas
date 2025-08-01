@@ -40,19 +40,19 @@ class Star extends PaintContent {
       (startPoint.dx + endPoint.dx) / 2,
       (startPoint.dy + endPoint.dy) / 2,
     );
-    
+
     final radius = (endPoint - startPoint).distance / 2;
     final innerRadius = radius * 0.4;
-    
+
     final path = Path();
     const numPoints = 5;
-    
+
     for (int i = 0; i < numPoints * 2; i++) {
       final angle = (i * math.pi) / numPoints - math.pi / 2;
       final r = i.isEven ? radius : innerRadius;
       final x = center.dx + r * math.cos(angle);
       final y = center.dy + r * math.sin(angle);
-      
+
       if (i == 0) {
         path.moveTo(x, y);
       } else {
@@ -60,7 +60,7 @@ class Star extends PaintContent {
       }
     }
     path.close();
-    
+
     canvas.drawPath(path, paint);
   }
 
@@ -109,27 +109,27 @@ class Arrow extends PaintContent {
   @override
   void draw(Canvas canvas, Size size, bool deeper) {
     final path = Path();
-    
+
     final dx = endPoint.dx - startPoint.dx;
     final dy = endPoint.dy - startPoint.dy;
     final angle = math.atan2(dy, dx);
-    
+
     const arrowLength = 20.0;
     const arrowAngle = 0.5;
-    
+
     path.moveTo(startPoint.dx, startPoint.dy);
     path.lineTo(endPoint.dx, endPoint.dy);
-    
+
     final arrowX1 = endPoint.dx - arrowLength * math.cos(angle - arrowAngle);
     final arrowY1 = endPoint.dy - arrowLength * math.sin(angle - arrowAngle);
     final arrowX2 = endPoint.dx - arrowLength * math.cos(angle + arrowAngle);
     final arrowY2 = endPoint.dy - arrowLength * math.sin(angle + arrowAngle);
-    
+
     path.moveTo(endPoint.dx, endPoint.dy);
     path.lineTo(arrowX1, arrowY1);
     path.moveTo(endPoint.dx, endPoint.dy);
     path.lineTo(arrowX2, arrowY2);
-    
+
     canvas.drawPath(path, paint);
   }
 
@@ -188,7 +188,7 @@ class TextContent extends PaintContent {
       ),
       textDirection: TextDirection.ltr,
     );
-    
+
     textPainter.layout();
     textPainter.paint(canvas, startPoint);
   }
@@ -218,10 +218,10 @@ class ImportedImageContent extends PaintContent {
   }) : super.paint(paint);
 
   factory ImportedImageContent.fromJson(Map<String, dynamic> data) {
-    final imageBytes = data['imageBytes'] != null 
+    final imageBytes = data['imageBytes'] != null
         ? Uint8List.fromList((data['imageBytes'] as List).cast<int>())
         : null;
-    
+
     return ImportedImageContent.data(
       startPoint: jsonToOffset(data['startPoint'] as Map<String, dynamic>),
       endPoint: jsonToOffset(data['endPoint'] as Map<String, dynamic>),
@@ -248,11 +248,14 @@ class ImportedImageContent extends PaintContent {
   @override
   void draw(Canvas canvas, Size size, bool deeper) {
     if (image == null) return;
-    
+
     final rect = Rect.fromPoints(startPoint, endPoint);
     if (rect.width.abs() < 10 || rect.height.abs() < 10) {
       // Default size if user hasn't dragged much
-      final defaultSize = Size(image!.width.toDouble(), image!.height.toDouble());
+      final defaultSize = Size(
+        image!.width.toDouble(),
+        image!.height.toDouble(),
+      );
       final scaledSize = _getScaledSize(defaultSize, const Size(200, 200));
       final adjustedRect = Rect.fromLTWH(
         startPoint.dx,
@@ -280,15 +283,13 @@ class ImportedImageContent extends PaintContent {
     final double scaleX = maxSize.width / originalSize.width;
     final double scaleY = maxSize.height / originalSize.height;
     final double scale = math.min(scaleX, scaleY);
-    
-    return Size(
-      originalSize.width * scale,
-      originalSize.height * scale,
-    );
+
+    return Size(originalSize.width * scale, originalSize.height * scale);
   }
 
   @override
-  ImportedImageContent copy() => ImportedImageContent(image: image, imageBytes: imageBytes);
+  ImportedImageContent copy() =>
+      ImportedImageContent(image: image, imageBytes: imageBytes);
 
   @override
   Map<String, dynamic> toContentJson() {

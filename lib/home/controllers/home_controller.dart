@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:ui' as ui;
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -241,7 +240,7 @@ class HomeController extends GetxController {
   Future<void> importImage({ImageSource source = ImageSource.gallery}) async {
     try {
       debugPrint('Starting image import from: $source');
-      
+
       final XFile? pickedFile = await _imagePicker.pickImage(
         source: source,
         imageQuality: 85,
@@ -255,16 +254,16 @@ class HomeController extends GetxController {
         debugPrint('Loading image bytes...');
         final Uint8List imageBytes = await pickedFile.readAsBytes();
         debugPrint('Image bytes length: ${imageBytes.length}');
-        
+
         debugPrint('Converting to UI image...');
         final ui.Image image = await _loadImageFromBytes(imageBytes);
         debugPrint('Image loaded: ${image.width}x${image.height}');
-        
+
         final imageContent = ImportedImageContent(
           image: image,
           imageBytes: imageBytes,
         );
-        
+
         drawingController.setPaintContent(imageContent);
         currentTool.value = 'ImportedImageContent';
         isEraserMode.value = false;
@@ -282,5 +281,4 @@ class HomeController extends GetxController {
     final ui.FrameInfo frameInfo = await codec.getNextFrame();
     return frameInfo.image;
   }
-
 }

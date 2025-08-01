@@ -4,27 +4,43 @@ import 'package:get/get.dart';
 import 'package:flutter_drawing_board/flutter_drawing_board.dart';
 import 'package:image_picker/image_picker.dart';
 import '../controllers/home_controller.dart';
+import '../../navigation/navigation_controller.dart';
+import '../../tshirt/screens/tshirt_screen.dart';
+import '../../unity/screens/home_page.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    return GetBuilder<NavigationController>(
+      init: NavigationController(),
+      builder: (navController) {
+        return Obx(() {
+          switch (navController.currentMode.value) {
+            case CanvasMode.canvas2D:
+              return _buildCanvas2D(context);
+            case CanvasMode.tshirt3D:
+              return _buildTshirt3D(context);
+            case CanvasMode.model3D:
+              return _build3DModel(context);
+          }
+        });
+      },
+    );
+  }
+
+  Widget _buildCanvas2D(BuildContext context) {
     return GetBuilder<HomeController>(
       init: HomeController(),
       builder: (controller) {
         return Scaffold(
+          drawer: _buildNavigationDrawer(context),
           backgroundColor: Colors.grey[100],
           appBar: AppBar(
-            title: Row(
-              children: [
-                Icon(Icons.pallet),
-                SizedBox(width: 10),
-                Text(
-                  'Canvaz',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ],
+            title: Text(
+              '2D Canvas',
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
             ),
             backgroundColor: Colors.white,
             foregroundColor: Colors.black87,
@@ -557,6 +573,237 @@ class HomeScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _build3DModel(BuildContext context) {
+    return Scaffold(drawer: _buildNavigationDrawer(context), body: HomePage());
+  }
+
+  Widget _buildTshirt3D(BuildContext context) {
+    return Scaffold(
+      drawer: _buildNavigationDrawer(context),
+      body: const TshirtScreen(),
+    );
+  }
+
+  Widget _buildNavigationDrawer(BuildContext context) {
+    final navController = Get.find<NavigationController>();
+
+    return Drawer(
+      child: Column(
+        children: [
+          Container(
+            height: 255,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Colors.blue[800]!, Colors.blue[600]!],
+              ),
+            ),
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: const Icon(
+                        Icons.palette,
+                        size: 30,
+                        color: Colors.blue,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Canvaz Studio',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Obx(
+                      () => Text(
+                        navController.currentModeTitle,
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.8),
+                          fontSize: 10,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                const SizedBox(height: 16),
+                Obx(
+                  () => ListTile(
+                    leading: Icon(
+                      Icons.draw,
+                      color:
+                          navController.currentMode.value == CanvasMode.canvas2D
+                          ? Colors.blue
+                          : Colors.grey[600],
+                    ),
+                    title: const Text('2D Canvas'),
+                    subtitle: const Text('Free drawing and sketching'),
+                    selected:
+                        navController.currentMode.value == CanvasMode.canvas2D,
+                    selectedTileColor: Colors.blue.withValues(alpha: 0.1),
+                    onTap: () {
+                      navController.switchToCanvas2D();
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                Obx(
+                  () => ListTile(
+                    leading: Icon(
+                      Icons.checkroom,
+                      color:
+                          navController.currentMode.value == CanvasMode.tshirt3D
+                          ? Colors.blue
+                          : Colors.grey[600],
+                    ),
+                    title: const Text('3D T-Shirt Designer'),
+                    subtitle: const Text('Design on 3D clothing models'),
+                    selected:
+                        navController.currentMode.value == CanvasMode.tshirt3D,
+                    selectedTileColor: Colors.blue.withValues(alpha: 0.1),
+                    onTap: () {
+                      navController.switchToTshirt3D();
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                Obx(
+                  () => ListTile(
+                    leading: Icon(
+                      Icons.abc,
+                      color:
+                          navController.currentMode.value == CanvasMode.canvas2D
+                          ? Colors.blue
+                          : Colors.grey[600],
+                    ),
+                    title: const Text('3D Model '),
+                    subtitle: const Text('Shirt Model 3Ding'),
+                    selected:
+                        navController.currentMode.value == CanvasMode.model3D,
+                    selectedTileColor: Colors.blue.withValues(alpha: 0.1),
+                    onTap: () {
+                      navController.switchTo3DModel();
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                const Divider(height: 32),
+                ListTile(
+                  leading: Icon(Icons.info_outline, color: Colors.grey[600]),
+                  title: const Text('About'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showAboutDialog(context);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.help_outline, color: Colors.grey[600]),
+                  title: const Text('Help'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showHelpDialog(context);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAboutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('About Canvaz Studio'),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Canvaz Studio is a powerful drawing and design application that offers both 2D canvas drawing and 3D T-shirt design capabilities.',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 16),
+            Text('Features:', style: TextStyle(fontWeight: FontWeight.bold)),
+            SizedBox(height: 8),
+            Text('• 2D Canvas with multiple drawing tools'),
+            Text('• 3D T-shirt design with real-time preview'),
+            Text('• Import/Export capabilities'),
+            Text('• Professional design tools'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showHelpDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Quick Help'),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '2D Canvas Mode:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text('• Use toolbar to select drawing tools'),
+            Text('• Tap color circle to change colors'),
+            Text('• Pinch to zoom, drag to pan'),
+            SizedBox(height: 16),
+            Text(
+              '3D T-shirt Mode:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text('• Toggle "Draw" mode to start designing'),
+            Text('• Rotate T-shirt to access different sides'),
+            Text('• Switch between Front/Back/Left/Right'),
+            Text('• Use same tools as 2D mode'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Got it!'),
+          ),
+        ],
       ),
     );
   }

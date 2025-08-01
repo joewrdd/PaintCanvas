@@ -49,5 +49,14 @@
 	<string>This app needs access to your photo library to import images into your drawings.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>This app needs access to your camera to take photos for importing into your drawings.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
 </dict>
 </plist>
